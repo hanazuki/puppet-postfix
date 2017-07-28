@@ -173,8 +173,25 @@ describe 'postfix' do
             let (:params) { {
               :mastercf_source => 'testy'
             } }
-            it 'should do stuff' do
-              skip 'need to write this still'
+            it 'should set source of master.cf' do
+              is_expected.to contain_file('/etc/postfix/master.cf').with_source(params[:mastercf_source])
+            end
+          end
+          context 'when specifying a custom mastercf_content' do
+            let (:params) { {
+              :mastercf_content => 'smtp inet n - n - - smtpd'
+            } }
+            it 'should set content of master.cf' do
+              is_expected.to contain_file('/etc/postfix/master.cf').with_content(params[:mastercf_content])
+            end
+          end
+          context 'when specifying both mastercf_source and mastercf_content' do
+            let (:params) { {
+              :mastercf_content => 'smtp inet n - n - - smtpd',
+              :mastercf_source  => 'test',
+            } }
+            it 'should fail' do
+              expect { should compile }.to raise_error(/Please disable one/)
             end
           end
           context 'when specifying a custom master_smtp' do

@@ -32,6 +32,8 @@
 #
 # [*mastercf_source*]     - (string)
 #
+# [*mastercf_content*]    - (string)
+#
 # [*master_smtp*]         - (string)
 #
 # [*master_smtps*]        - (string)
@@ -87,6 +89,7 @@ class postfix (
   Boolean                         $manage_conffiles    = true,
   Boolean                         $manage_mailx        = true,
   Optional[String]                $mastercf_source     = undef,
+  Optional[String]                $mastercf_content    = undef,
   Optional[String]                $master_smtp         = undef,         # postfix_master_smtp
   Optional[String]                $master_smtps        = undef,         # postfix_master_smtps
   Optional[String]                $master_submission   = undef,         # postfix_master_submission
@@ -115,6 +118,10 @@ class postfix (
   $all_alias_maps = $ldap ? {
     false => $alias_maps,
     true  => "${alias_maps}, ldap:/etc/postfix/ldap-aliases.cf",
+  }
+
+  if $mastercf_source and $mastercf_content {
+    fail('At most one of $mastercf_source and $mastercf_content can be specified. Please disable one.')
   }
 
   anchor { 'postfix::begin': }

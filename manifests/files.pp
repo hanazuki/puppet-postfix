@@ -55,10 +55,13 @@ class postfix::files {
   if $mastercf_source {
     $mastercf_content = undef
   } else {
-    $mastercf_content = template(
+    $mastercf_content = pick(
+      $postfix::mastercf_content,
+      template(
         $postfix::params::master_os_template,
         'postfix/master.cf.common.erb'
       )
+    )
   }
 
   file { '/etc/postfix/master.cf':
